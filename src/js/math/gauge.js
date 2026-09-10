@@ -61,3 +61,20 @@ export function adaptPattern({ patternStitches, patternRows, patternStitches10cm
     rowFactor: ownRowGauge / patternRowGauge
   };
 }
+
+export function distributeChanges(startValue, endValue) {
+  const start = Math.round(positive(startValue, 'Los puntos iniciales'));
+  const end = Math.round(positive(endValue, 'Los puntos finales'));
+  const changes = Math.abs(end - start);
+  if (changes === 0) return { start, end, changes: 0, direction: 'same', positions: [], gaps: [start] };
+  if (changes >= start) throw new Error('El cambio es demasiado grande para repartirlo en una sola vuelta.');
+  const positions = [];
+  for (let index = 1; index <= changes; index += 1) {
+    const position = Math.round(index * start / (changes + 1));
+    if (!positions.includes(position)) positions.push(position);
+  }
+  if (positions.length !== changes) throw new Error('No hay suficientes puntos para separar todos los cambios.');
+  const marks = [0, ...positions, start];
+  const gaps = marks.slice(1).map((position, index) => position - marks[index]);
+  return { start, end, changes, direction: end > start ? 'increase' : 'decrease', positions, gaps };
+}

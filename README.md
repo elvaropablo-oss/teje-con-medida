@@ -15,6 +15,7 @@ La web está preparada para GitHub Pages bajo `/teje-con-medida/`. No necesita b
 - calcular puntos y vueltas para una pieza rectangular;
 - respetar múltiplos de motivo y puntos adicionales;
 - adaptar un tramo rectangular entre dos tensiones;
+- repartir aumentos o disminuciones a lo largo de una vuelta;
 - guardar localmente el último cálculo.
 
 No genera patrones completos, no calcula prendas con forma ni estima consumo de hilo sin una muestra de peso fiable.

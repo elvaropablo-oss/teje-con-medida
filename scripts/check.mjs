@@ -26,7 +26,7 @@ for (const file of htmlFiles) {
 }
 
 const sitemap = await readFile(path.join(dist, 'sitemap.xml'), 'utf8');
-for (const required of ['calcular-muestra/', 'puntos-y-vueltas/', 'adaptar-patron/']) {
+for (const required of ['calcular-muestra/', 'puntos-y-vueltas/', 'adaptar-patron/', 'repartir-cambios/']) {
   if (!sitemap.includes(required)) failures.push(`sitemap: falta ${required}`);
 }
 if (sitemap.includes('mi-proyecto/') || sitemap.includes('404')) failures.push('sitemap: contiene una ruta no indexable');

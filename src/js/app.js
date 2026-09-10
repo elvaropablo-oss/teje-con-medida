@@ -1,4 +1,4 @@
-import { adaptPattern, dimensionsToCounts, normalizeGauge } from './math/gauge.js';
+import { adaptPattern, dimensionsToCounts, distributeChanges, normalizeGauge } from './math/gauge.js';
 
 const number = (form, name) => form.elements[name].value;
 const format = (value, digits = 1) => new Intl.NumberFormat('es-ES', { maximumFractionDigits: digits }).format(value);
@@ -56,6 +56,23 @@ document.querySelector('#adapt-form')?.addEventListener('submit', (event) => {
   } catch (error) { fail(form, error); }
 });
 
+document.querySelector('#changes-form')?.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  try {
+    const result = distributeChanges(number(form, 'start'), number(form, 'end'));
+    const resultBox = document.querySelector('#changes-result');
+    if (result.changes === 0) {
+      show(resultBox, '<p class="eyebrow">Sin cambios</p><h2>Mantén el mismo número de puntos</h2><p>No necesitas repartir aumentos ni disminuciones.</p>');
+      return;
+    }
+    const action = result.direction === 'increase' ? 'aumentos' : 'disminuciones';
+    const marks = result.positions.map((position) => `<li>Marca después del punto ${position} de la vuelta original.</li>`).join('');
+    show(resultBox, `<p class="eyebrow">Reparto equilibrado</p><h2>${result.changes} ${action}</h2><p>Coloca marcas provisionales en estas posiciones:</p><ol>${marks}</ol><p class="note">Las separaciones quedan entre ${Math.min(...result.gaps)} y ${Math.max(...result.gaps)} puntos. Revisa la simetría del motivo antes de tejer.</p>`);
+    save({ type: 'changes', ...result, savedAt: new Date().toISOString() });
+  } catch (error) { fail(form, error); }
+});
+
 const saved = document.querySelector('#saved-result');
 if (saved) {
   try {
@@ -64,7 +81,8 @@ if (saved) {
     const descriptions = {
       gauge: `Muestra: ${format(value.stitches10cm, 2)} puntos × ${format(value.rows10cm, 2)} vueltas en 10 cm`,
       counts: `Pieza: ${value.stitches} puntos × ${value.rows} vueltas`,
-      adapt: `Adaptación: ${value.stitches} puntos × ${value.rows} vueltas`
+      adapt: `Adaptación: ${value.stitches} puntos × ${value.rows} vueltas`,
+      changes: `Reparto: ${value.changes} ${value.direction === 'increase' ? 'aumentos' : 'disminuciones'} entre ${value.start} y ${value.end} puntos`
     };
     saved.innerHTML = `<h2>Último cálculo</h2><p>${descriptions[value.type]}</p><p class="note">Guardado en este dispositivo.</p>`;
   } catch { saved.innerHTML = '<h2>Aún no hay cálculos guardados</h2><p>Usa una herramienta y el último resultado aparecerá aquí.</p>'; }
