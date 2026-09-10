@@ -1,0 +1,70 @@
+import { breadcrumbs, hero, linkButton } from '../templates/site.mjs';
+
+const crumb = (label, path) => breadcrumbs([{ label: 'Inicio', path: '' }, { label, path }]);
+const card = (title, text, path, label = 'Abrir calculadora') => `<article class="card"><h2>${title}</h2><p>${text}</p>${linkButton(path, label)}</article>`;
+const input = (label, name, value, suffix, attrs = '') => `<label>${label}<span class="input-row"><input name="${name}" value="${value}" inputmode="decimal" ${attrs}><span>${suffix}</span></span></label>`;
+const error = '<div class="error" data-error role="alert" tabindex="-1" hidden></div>';
+
+export const pages = [
+  {
+    path: '', h1: 'Convierte tu muestra en puntos, vueltas y medidas fiables',
+    title: 'TejeConMedida: calculadoras de muestras, puntos y vueltas',
+    description: 'Calculadoras gratuitas para medir la tensión, calcular puntos y vueltas y adaptar un patrón de punto o ganchillo.',
+    schema: { '@context': 'https://schema.org', '@type': 'WebSite', name: 'TejeConMedida', url: 'https://elvaropablo-oss.github.io/teje-con-medida/', inLanguage: 'es-ES' },
+    content: `${hero('Punto y ganchillo con números claros', 'Convierte tu muestra en puntos, vueltas y medidas fiables', 'Mide el tejido que tienes delante y obtén cálculos revisables. La herramienta no presupone que tu tensión coincida con la etiqueta del ovillo.', `${linkButton('calcular-muestra/', 'Tengo una muestra')}${linkButton('puntos-y-vueltas/', 'Quiero calcular una pieza', true)}`)}
+      <section class="section"><div class="section-heading"><p class="eyebrow">Un flujo conectado</p><h2>De la muestra a la pieza</h2></div><div class="card-grid">${card('Normalizar una muestra', 'Convierte cualquier zona medida a puntos y vueltas por 10 cm.', 'calcular-muestra/')}${card('Calcular una pieza', 'Obtén puntos y vueltas para un ancho y alto, respetando el múltiplo del motivo.', 'puntos-y-vueltas/')}${card('Adaptar un tramo de patrón', 'Conserva la medida física al pasar de la tensión del patrón a la tuya.', 'adaptar-patron/')}</div></section>
+      <section class="section split"><div><p class="eyebrow">La diferencia que importa</p><h2>No redondeamos sin enseñarte el efecto</h2><p>Un motivo puede exigir múltiplos de 4, 6 o 12 puntos y añadir bordes. Calculamos la cifra compatible y mostramos el ancho que realmente producirá.</p></div><aside class="sample"><p>20 puntos en 10 cm</p><strong>50 cm → 100 puntos</strong><p>Con múltiplo de 6 + 2 bordes: 98 o 104 puntos, según cómo decidas redondear.</p></aside></section>`
+  },
+  {
+    path: 'herramientas', h1: 'Calculadoras para tejer con tu propia tensión', title: 'Calculadoras de punto y ganchillo | TejeConMedida', description: 'Directorio de herramientas para calcular muestras, puntos, vueltas y adaptar patrones.',
+    content: `${crumb('Herramientas', 'herramientas/')} ${hero('Calculadoras', 'Calculadoras para tejer con tu propia tensión', 'Empieza por la información que ya tienes: una muestra, una medida final o un patrón.')}
+      <section class="section card-grid">${card('Calcular tensión de muestra', 'Normaliza puntos y vueltas desde cualquier ancho y alto medidos.', 'calcular-muestra/')}${card('Puntos y vueltas por medida', 'Incluye múltiplo del motivo, puntos extra y dirección del redondeo.', 'puntos-y-vueltas/')}${card('Adaptar patrón a otra tensión', 'Convierte un tramo rectangular sin confundir puntos con vueltas.', 'adaptar-patron/')}</section>`
+  },
+  {
+    path: 'calcular-muestra', tool: true, h1: 'Calculadora de muestra de punto y ganchillo', title: 'Calculadora de muestra y tensión por 10 cm | TejeConMedida', description: 'Introduce puntos, vueltas y la zona medida para calcular tu tensión exacta por 10 centímetros.',
+    content: `${crumb('Calcular muestra', 'calcular-muestra/')} ${hero('Tu tejido manda', 'Calculadora de muestra de punto y ganchillo', 'Cuenta una zona interior estable. Puede medir 7, 10 o 14 cm: la normalizamos sin redondear antes de tiempo.')}
+      <section class="tool-layout"><form id="gauge-form" class="tool-card"><fieldset><legend>Zona que has medido</legend>${input('Puntos contados', 'stitches', '22', 'puntos', 'required')}${input('Ancho de esa zona', 'width', '10', 'cm', 'required')}${input('Vueltas contadas', 'rows', '30', 'vueltas', 'required')}${input('Alto de esa zona', 'height', '10', 'cm', 'required')}</fieldset>${error}<button class="button" type="submit">Calcular mi tensión</button></form><section id="gauge-result" class="result" tabindex="-1" aria-live="polite" hidden></section></section>
+      <article class="section prose"><h2>Por qué puedes medir más de 10 cm</h2><p>La tensión suele expresarse por 10 cm, pero contar una zona mayor reduce el peso de un error pequeño. Mide puntos completos en el centro y evita orillas, montaje y cierre.</p><h2>Antes y después de bloquear</h2><p>Guarda ambas medidas si el proyecto se lavará o bloqueará. Para la talla final usa la muestra tratada como tratarás la prenda.</p>${linkButton('guias/medir-muestra/', 'Ver la guía de medición', true)}</article>`
+  },
+  {
+    path: 'puntos-y-vueltas', tool: true, h1: 'Calcula puntos y vueltas para una medida', title: 'Calculadora de puntos y vueltas por centímetros | TejeConMedida', description: 'Calcula cuántos puntos montar y vueltas tejer según tu tensión, las medidas finales y el múltiplo del motivo.',
+    content: `${crumb('Puntos y vueltas', 'puntos-y-vueltas/')} ${hero('De centímetros a tejido', 'Calcula puntos y vueltas para una medida', 'Añade el múltiplo del motivo y los puntos de borde para obtener una cifra que realmente puedas tejer.')}
+      <section class="tool-layout"><form id="counts-form" class="tool-card"><fieldset><legend>Tu tensión por 10 cm</legend>${input('Puntos', 'stitches10cm', '20', 'puntos', 'required')}${input('Vueltas', 'rows10cm', '28', 'vueltas', 'required')}</fieldset><fieldset><legend>Medida final</legend>${input('Ancho', 'width', '50', 'cm', 'required')}${input('Alto', 'height', '60', 'cm', 'required')}</fieldset><fieldset><legend>Ajuste del motivo</legend>${input('Múltiplo del motivo', 'repeat', '1', 'puntos', 'required')}${input('Puntos adicionales', 'extra', '0', 'puntos')}<label>Redondear<select name="round"><option value="nearest">Al valor compatible más cercano</option><option value="up">Siempre hacia arriba</option><option value="down">Siempre hacia abajo</option></select></label></fieldset>${error}<button class="button" type="submit">Calcular puntos y vueltas</button></form><section id="counts-result" class="result" tabindex="-1" aria-live="polite" hidden></section></section>
+      <article class="section prose"><h2>Cómo se respeta un motivo</h2><p>Para “múltiplo de 6 + 2”, separamos primero los 2 puntos adicionales, buscamos el múltiplo de 6 compatible y los añadimos de nuevo. El ancho resultante puede variar ligeramente.</p><h2>Qué no incluye</h2><p>No añade holgura, márgenes de costura, puntos de cenefa ni aumentos. Introduce como medida final el ancho que realmente debe tener la pieza según tu diseño.</p></article>`
+  },
+  {
+    path: 'adaptar-patron', tool: true, h1: 'Adapta un patrón a tu tensión de tejido', title: 'Adaptar patrón a otra tensión | TejeConMedida', description: 'Convierte los puntos y vueltas de un tramo rectangular desde la tensión del patrón a la tensión de tu muestra.',
+    content: `${crumb('Adaptar patrón', 'adaptar-patron/')} ${hero('Dos ejes, dos factores', 'Adapta un patrón a tu tensión de tejido', 'Conserva el ancho y el alto de un tramo rectangular usando por separado tu tensión horizontal y vertical.')}
+      <section class="tool-layout"><form id="adapt-form" class="tool-card"><fieldset><legend>Tramo del patrón</legend>${input('Puntos indicados', 'patternStitches', '100', 'puntos', 'required')}${input('Vueltas indicadas', 'patternRows', '140', 'vueltas', 'required')}</fieldset><fieldset><legend>Tensión del patrón en 10 cm</legend>${input('Puntos', 'patternStitches10cm', '20', 'puntos', 'required')}${input('Vueltas', 'patternRows10cm', '28', 'vueltas', 'required')}</fieldset><fieldset><legend>Tu muestra en 10 cm</legend>${input('Puntos', 'ownStitches10cm', '22', 'puntos', 'required')}${input('Vueltas', 'ownRows10cm', '30', 'vueltas', 'required')}</fieldset>${error}<button class="button" type="submit">Adaptar este tramo</button></form><section id="adapt-result" class="result" tabindex="-1" aria-live="polite" hidden></section></section>
+      <article class="section prose"><h2>Alcance seguro del cálculo</h2><p>Funciona para tramos rectangulares y distancias entre hitos. Un patrón completo puede contener motivos, sisas, talones, pinzas o aumentos cuya posición exige rediseño.</p><h2>Comprueba el tejido</h2><p>La conversión conserva dimensiones matemáticas. No garantiza la misma caída, elasticidad o consumo de hilo al cambiar material, aguja o punto.</p></article>`
+  },
+  {
+    path: 'guias/medir-muestra', h1: 'Cómo medir una muestra de tejido', title: 'Cómo medir correctamente una muestra | TejeConMedida', description: 'Guía para contar puntos y vueltas en una muestra sin incluir bordes y registrar el efecto del bloqueo.',
+    content: `${crumb('Medir una muestra', 'guias/medir-muestra/')} ${hero('Medición antes de cálculo', 'Cómo medir una muestra de tejido', 'Una calculadora precisa no corrige una muestra estirada, pequeña o medida en el borde.')}
+      <article class="section prose"><h2>Teje una zona suficiente</h2><ol><li>Usa el hilo, aguja o ganchillo y punto del proyecto.</li><li>Haz una muestra mayor que la zona que medirás.</li><li>Déjala reposar y bloquéala si así tratarás la pieza final.</li><li>Mide en el centro, sin estirar.</li><li>Cuenta puntos completos y vueltas dentro de la zona.</li></ol><h2>Anota el contexto</h2><p>Registra material, número de aguja, punto, fecha y si la medida es anterior o posterior al bloqueo. Dos muestras con el mismo hilo pueden cambiar por la técnica y la persona.</p>${linkButton('calcular-muestra/', 'Calcular mi muestra')}</article>`
+  },
+  {
+    path: 'metodologia', h1: 'Fórmulas y límites de TejeConMedida', title: 'Metodología y fórmulas | TejeConMedida', description: 'Consulta las fórmulas utilizadas para tensión, puntos, vueltas, repeticiones y adaptación de patrones.',
+    content: `${crumb('Metodología', 'metodologia/')} ${hero('Cálculos visibles', 'Fórmulas y límites de TejeConMedida', 'Puedes reproducir cada resultado con una calculadora corriente.')}
+      <article class="section prose"><h2>Tensión</h2><p>Puntos por cm = puntos contados ÷ ancho medido. Vueltas por cm = vueltas contadas ÷ alto medido. Multiplicamos ambos resultados por 10 para mostrar la convención habitual.</p><h2>Medidas finales</h2><p>Puntos teóricos = puntos por cm × ancho. Vueltas teóricas = vueltas por cm × alto. Solo los puntos se ajustan automáticamente al múltiplo y a los puntos extra declarados.</p><h2>Adaptación</h2><p>Primero recuperamos el ancho y alto físicos del tramo original. Después calculamos cuántos puntos y vueltas producen esas dimensiones con tu muestra. Horizontal y vertical usan factores independientes.</p><h2>Fuentes</h2><p>La convención de tensión por 10 cm y los rangos orientativos están documentados por el Craft Yarn Council. La Knitting Guild Association recomienda medir la mayor zona útil posible, excluir orillas y comparar la muestra después del bloqueo.</p></article>`
+  },
+  {
+    path: 'mi-proyecto', noindex: true, h1: 'Mi último cálculo de tejido', title: 'Mi proyecto | TejeConMedida', description: 'Consulta el último cálculo guardado localmente en este navegador.',
+    content: `${crumb('Mi proyecto', 'mi-proyecto/')} ${hero('Guardado en tu dispositivo', 'Mi último cálculo de tejido', 'El navegador conserva únicamente el resultado más reciente; no necesitas una cuenta.')}
+      <section class="section"><div id="saved-result" class="result"></div><button id="clear-project" class="button button--quiet" type="button">Borrar cálculo guardado</button></section>`
+  },
+  {
+    path: 'sobre', h1: 'Sobre TejeConMedida', title: 'Sobre el proyecto | TejeConMedida', description: 'Conoce el propósito y los límites de TejeConMedida.',
+    content: `${crumb('Sobre', 'sobre/')} ${hero('Una herramienta pequeña', 'Sobre TejeConMedida', 'Creamos cálculos transparentes para quien ya tiene una muestra o un patrón delante.')}
+      <article class="section prose"><h2>Principios</h2><p>La web prioriza fórmulas explicables, unidades visibles y resultados que puedes contrastar con una regla. No publica patrones ni estima lana sin datos suficientes.</p><h2>Estado</h2><p>Esta primera versión es experimental. Su utilidad matemática no demuestra demanda ni sustituye la prueba física del tejido.</p></article>`
+  },
+  {
+    path: 'privacidad', h1: 'Privacidad', title: 'Privacidad | TejeConMedida', description: 'Información sobre almacenamiento local y privacidad en TejeConMedida.',
+    content: `${crumb('Privacidad', 'privacidad/')} ${hero('Sin cuenta', 'Privacidad', 'Las calculadoras funcionan íntegramente en el navegador.')}
+      <article class="section prose"><h2>Datos del proyecto</h2><p>El último cálculo se guarda en el almacenamiento local de tu navegador. No se envía a un servidor y puedes borrarlo desde Mi proyecto.</p><h2>Analítica</h2><p>Esta versión no instala Google Analytics ni otros servicios de medición. Si se incorpora analítica, esta página se actualizará antes de activarla.</p></article>`
+  },
+  {
+    path: '404', output: '404.html', noindex: true, h1: 'Página no encontrada', title: 'Página no encontrada | TejeConMedida', description: 'La página solicitada no existe.',
+    content: `${hero('Error 404', 'Página no encontrada', 'La dirección puede contener un error o haber cambiado.', linkButton('', 'Volver al inicio'))}`
+  }
+];
