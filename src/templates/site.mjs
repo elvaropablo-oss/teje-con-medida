@@ -40,6 +40,7 @@ export function renderPage(page) {
   <script type="application/ld+json">${schema}</script>
   <script type="module" src="${base}assets/app.js"></script>
   <script type="module" src="${base}assets/visuals.js"></script>
+  <script type="module" src="${base}assets/quality-fixes.js"></script>
 </head>
 <body class="page-${page.path ? page.path.replaceAll('/', '-') : 'home'}">
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
