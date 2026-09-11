@@ -18,7 +18,7 @@ document.querySelector('#gauge-form')?.addEventListener('submit', (event) => {
   const form = event.currentTarget;
   try {
     const result = normalizeGauge({ stitches: number(form, 'stitches'), rows: number(form, 'rows'), width: number(form, 'width'), height: number(form, 'height') });
-    show(document.querySelector('#gauge-result'), `<p class="eyebrow">Tu tensión normalizada</p><h2>${format(result.stitches10cm, 2)} puntos × ${format(result.rows10cm, 2)} vueltas</h2><p>por cada 10 × 10 cm</p><p>Equivale a ${format(result.stitchesPerCm, 3)} puntos y ${format(result.rowsPerCm, 3)} vueltas por centímetro.</p><a class="button" href="../puntos-y-vueltas/?st=${encodeURIComponent(result.stitches10cm)}&rw=${encodeURIComponent(result.rows10cm)}">Usar esta muestra</a>`);
+    show(document.querySelector('#gauge-result'), `<p class="metric-label">Tu tensión normalizada</p><h2>${format(result.stitches10cm, 2)} puntos × ${format(result.rows10cm, 2)} vueltas</h2><p>por cada 10 × 10 cm</p><p>Equivale a ${format(result.stitchesPerCm, 3)} puntos y ${format(result.rowsPerCm, 3)} vueltas por centímetro.</p><a class="button" href="../puntos-y-vueltas/?st=${encodeURIComponent(result.stitches10cm)}&rw=${encodeURIComponent(result.rows10cm)}">Usar esta muestra</a>`);
     save({ type: 'gauge', ...result, savedAt: new Date().toISOString() });
   } catch (error) { fail(form, error); }
 });
@@ -36,7 +36,7 @@ if (countsForm) {
         width: number(countsForm, 'width'), height: number(countsForm, 'height'), repeat: number(countsForm, 'repeat'),
         extra: number(countsForm, 'extra'), round: countsForm.elements.round.value
       });
-      show(document.querySelector('#counts-result'), `<p class="eyebrow">Resultado ajustado</p><h2>Monta ${result.stitches} puntos</h2><p>Teje aproximadamente <strong>${result.rows} vueltas</strong>.</p><dl><div><dt>Ancho resultante</dt><dd>${format(result.achievedWidth, 2)} cm</dd></div><div><dt>Alto resultante</dt><dd>${format(result.achievedHeight, 2)} cm</dd></div></dl><p class="note">El redondeo respeta el múltiplo del motivo y los puntos adicionales indicados.</p>`);
+      show(document.querySelector('#counts-result'), `<p class="metric-label">Resultado ajustado</p><h2>Monta ${result.stitches} puntos</h2><p>Teje aproximadamente <strong>${result.rows} vueltas</strong>.</p><dl><div><dt>Ancho resultante</dt><dd>${format(result.achievedWidth, 2)} cm</dd></div><div><dt>Alto resultante</dt><dd>${format(result.achievedHeight, 2)} cm</dd></div></dl><p class="note">El redondeo respeta el múltiplo del motivo y los puntos adicionales indicados.</p>`);
       save({ type: 'counts', ...result, savedAt: new Date().toISOString() });
     } catch (error) { fail(countsForm, error); }
   });
@@ -51,7 +51,7 @@ document.querySelector('#adapt-form')?.addEventListener('submit', (event) => {
       patternStitches10cm: number(form, 'patternStitches10cm'), patternRows10cm: number(form, 'patternRows10cm'),
       ownStitches10cm: number(form, 'ownStitches10cm'), ownRows10cm: number(form, 'ownRows10cm')
     });
-    show(document.querySelector('#adapt-result'), `<p class="eyebrow">Misma medida, tu tensión</p><h2>${result.stitches} puntos × ${result.rows} vueltas</h2><p>El tramo original mide aproximadamente ${format(result.widthCm, 2)} × ${format(result.heightCm, 2)} cm.</p><p>Factores independientes: ×${format(result.stitchFactor, 3)} en horizontal y ×${format(result.rowFactor, 3)} en vertical.</p><p class="note">Revisa aumentos, disminuciones, sisas y motivos: no se adaptan de forma segura multiplicando todo el patrón.</p>`);
+    show(document.querySelector('#adapt-result'), `<p class="metric-label">Misma medida, tu tensión</p><h2>${result.stitches} puntos × ${result.rows} vueltas</h2><p>El tramo original mide aproximadamente ${format(result.widthCm, 2)} × ${format(result.heightCm, 2)} cm.</p><p>Factores independientes: ×${format(result.stitchFactor, 3)} en horizontal y ×${format(result.rowFactor, 3)} en vertical.</p><p class="note">Revisa aumentos, disminuciones, sisas y motivos: no se adaptan de forma segura multiplicando todo el patrón.</p>`);
     save({ type: 'adapt', ...result, savedAt: new Date().toISOString() });
   } catch (error) { fail(form, error); }
 });
@@ -63,12 +63,12 @@ document.querySelector('#changes-form')?.addEventListener('submit', (event) => {
     const result = distributeChanges(number(form, 'start'), number(form, 'end'));
     const resultBox = document.querySelector('#changes-result');
     if (result.changes === 0) {
-      show(resultBox, '<p class="eyebrow">Sin cambios</p><h2>Mantén el mismo número de puntos</h2><p>No necesitas repartir aumentos ni disminuciones.</p>');
+      show(resultBox, '<p class="metric-label">Sin cambios</p><h2>Mantén el mismo número de puntos</h2><p>No necesitas repartir aumentos ni disminuciones.</p>');
       return;
     }
     const action = result.direction === 'increase' ? 'aumentos' : 'disminuciones';
     const marks = result.positions.map((position) => `<li>Marca después del punto ${position} de la vuelta original.</li>`).join('');
-    show(resultBox, `<p class="eyebrow">Reparto equilibrado</p><h2>${result.changes} ${action}</h2><p>Coloca marcas provisionales en estas posiciones:</p><ol>${marks}</ol><p class="note">Las separaciones quedan entre ${Math.min(...result.gaps)} y ${Math.max(...result.gaps)} puntos. Revisa la simetría del motivo antes de tejer.</p>`);
+    show(resultBox, `<p class="metric-label">Reparto equilibrado</p><h2>${result.changes} ${action}</h2><p>Coloca marcas provisionales en estas posiciones:</p><ol>${marks}</ol><p class="note">Las separaciones quedan entre ${Math.min(...result.gaps)} y ${Math.max(...result.gaps)} puntos. Revisa la simetría del motivo antes de tejer.</p>`);
     save({ type: 'changes', ...result, savedAt: new Date().toISOString() });
   } catch (error) { fail(form, error); }
 });

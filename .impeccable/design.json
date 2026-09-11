@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 2,
+  "project": "TejeConMedida",
+  "northStar": "A modern pattern worksheet on a cutting table: stitch notation, bold annotations and visible arithmetic.",
+  "palette": {
+    "ink": "#17152b",
+    "inkSoft": "#494761",
+    "paper": "#fbfaf4",
+    "paperDeep": "#f0eee5",
+    "cobalt": "#3046d3",
+    "cobaltDark": "#1f2f9d",
+    "acid": "#d9fa54",
+    "coral": "#ff675d"
+  },
+  "typography": {
+    "display": "Arial Black / Segoe UI Black / Helvetica Neue",
+    "body": "Segoe UI Variable / Aptos / Helvetica Neue",
+    "labels": "Cascadia Mono / Consolas"
+  },
+  "geometry": {
+    "corners": "square",
+    "borders": "2px ink",
+    "depth": "hard offset shadows"
+  },
+  "motion": {
+    "buttonPress": "150ms translate and shadow reduction",
+    "reducedMotion": true
+  },
+  "breakpoints": [840, 560],
+  "components": [
+    "gauge-swatch-hero",
+    "asymmetric-tool-card-grid",
+    "technical-input-row",
+    "high-contrast-result-panel"
+  ]
+}
