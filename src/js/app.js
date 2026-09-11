@@ -51,27 +51,37 @@ document.querySelector('#adapt-form')?.addEventListener('submit', (event) => {
       patternStitches10cm: number(form, 'patternStitches10cm'), patternRows10cm: number(form, 'patternRows10cm'),
       ownStitches10cm: number(form, 'ownStitches10cm'), ownRows10cm: number(form, 'ownRows10cm')
     });
-    show(document.querySelector('#adapt-result'), `<p class="metric-label">Misma medida, tu tensión</p><h2>${result.stitches} puntos × ${result.rows} vueltas</h2><p>El tramo original mide aproximadamente ${format(result.widthCm, 2)} × ${format(result.heightCm, 2)} cm.</p><p>Factores independientes: ×${format(result.stitchFactor, 3)} en horizontal y ×${format(result.rowFactor, 3)} en vertical.</p><p class="note">Revisa aumentos, disminuciones, sisas y motivos: no se adaptan de forma segura multiplicando todo el patrón.</p>`);
+    const start = Number(number(form, 'patternStitches'));
+    const transfer = Number.isFinite(start) && start !== result.stitches
+      ? `<a class="button" href="../repartir-cambios/?start=${encodeURIComponent(start)}&end=${encodeURIComponent(result.stitches)}">Repartir el cambio de puntos</a>`
+      : '';
+    show(document.querySelector('#adapt-result'), `<p class="metric-label">Misma medida, tu tensión</p><h2>${result.stitches} puntos × ${result.rows} vueltas</h2><p>El tramo original mide aproximadamente ${format(result.widthCm, 2)} × ${format(result.heightCm, 2)} cm.</p><p>Factores independientes: ×${format(result.stitchFactor, 3)} en horizontal y ×${format(result.rowFactor, 3)} en vertical.</p>${transfer}<p class="note">Revisa aumentos, disminuciones, sisas y motivos: no se adaptan de forma segura multiplicando todo el patrón.</p>`);
     save({ type: 'adapt', ...result, savedAt: new Date().toISOString() });
   } catch (error) { fail(form, error); }
 });
 
-document.querySelector('#changes-form')?.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const form = event.currentTarget;
-  try {
-    const result = distributeChanges(number(form, 'start'), number(form, 'end'));
-    const resultBox = document.querySelector('#changes-result');
-    if (result.changes === 0) {
-      show(resultBox, '<p class="metric-label">Sin cambios</p><h2>Mantén el mismo número de puntos</h2><p>No necesitas repartir aumentos ni disminuciones.</p>');
-      return;
-    }
-    const action = result.direction === 'increase' ? 'aumentos' : 'disminuciones';
-    const marks = result.positions.map((position) => `<li>Marca después del punto ${position} de la vuelta original.</li>`).join('');
-    show(resultBox, `<p class="metric-label">Reparto equilibrado</p><h2>${result.changes} ${action}</h2><p>Coloca marcas provisionales en estas posiciones:</p><ol>${marks}</ol><p class="note">Las separaciones quedan entre ${Math.min(...result.gaps)} y ${Math.max(...result.gaps)} puntos. Revisa la simetría del motivo antes de tejer.</p>`);
-    save({ type: 'changes', ...result, savedAt: new Date().toISOString() });
-  } catch (error) { fail(form, error); }
-});
+const changesForm = document.querySelector('#changes-form');
+if (changesForm) {
+  const params = new URLSearchParams(location.search);
+  if (params.has('start')) changesForm.elements.start.value = params.get('start');
+  if (params.has('end')) changesForm.elements.end.value = params.get('end');
+  changesForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    try {
+      const result = distributeChanges(number(form, 'start'), number(form, 'end'));
+      const resultBox = document.querySelector('#changes-result');
+      if (result.changes === 0) {
+        show(resultBox, '<p class="metric-label">Sin cambios</p><h2>Mantén el mismo número de puntos</h2><p>No necesitas repartir aumentos ni disminuciones.</p>');
+        return;
+      }
+      const action = result.direction === 'increase' ? 'aumentos' : 'disminuciones';
+      const marks = result.positions.map((position) => `<li>Marca después del punto ${position} de la vuelta original.</li>`).join('');
+      show(resultBox, `<p class="metric-label">Reparto equilibrado</p><h2>${result.changes} ${action}</h2><p>Coloca marcas provisionales en estas posiciones:</p><ol>${marks}</ol><p class="note">Las separaciones quedan entre ${Math.min(...result.gaps)} y ${Math.max(...result.gaps)} puntos. Revisa la simetría del motivo antes de tejer.</p>`);
+      save({ type: 'changes', ...result, savedAt: new Date().toISOString() });
+    } catch (error) { fail(form, error); }
+  });
+}
 
 const saved = document.querySelector('#saved-result');
 if (saved) {
